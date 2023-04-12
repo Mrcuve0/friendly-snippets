@@ -1,249 +1,687 @@
 {
-   "ieee_imports": {
-      "prefix": "ieee",
-      "description": "IEEE Standard Packages",
+   "Alias": {
+      "prefix": "alias",
       "body": [
-         "library IEEE;",
-         "use IEEE.std_logic_1164.all;",
-         "use IEEE.numeric_std.all;"
-      ]
+         "alias ${1:<name>} : ${2:<subtype>} is ${3:<object_name>};",
+         "$0"
+      ],
+      "description": "alias declaration"
    },
-   "entity_declaration": {
-      "prefix": "ent",
-      "description": "Entity Declaration",
+   "Alias External Name": {
+      "prefix": "aliasext",
+      "body": [
+         "alias ${1:<name>} is << ${2|signal,variable,constant|} ${3:<path.to.signal.name>} : ${4:<type>} >>;",
+         "$0"
+      ],
+      "description": "hierarchical signal declaration (vhdl 2008). NOTE: for standard types (SLV, unsighed, signed, etc.), no range needs to be specified"
+   },
+   "Architecture": {
+      "prefix": "architecture",
+      "body": [
+         "architecture ${1:rtl} of ${2:$TM_FILENAME_BASE} is",
+         "",
+         "begin",
+         "",
+         "\t$0",
+         "",
+         "end architecture;"
+      ],
+      "description": "architecture interface"
+   },
+   "Array": {
+      "prefix": "typearray",
+      "body": [
+         "type ${1:<name>} is array (${2:natural range<>}) of ${3:<element_type>};",
+         "$0"
+      ],
+      "description": "array type declaration"
+   },
+   "Assert": {
+      "prefix": "assert",
+      "body": [
+         "assert ${1:<negated_condition>}",
+         "\treport \"${2:<string>}\"",
+         "\tseverity ${3|note,warning,error,failure|};",
+         "$0"
+      ],
+      "description": "assert declaration"
+   },
+   "Attribute Declaration": {
+      "prefix": "attributedec",
+      "body": [
+         "attribute ${1:<name>} : ${2:<type>};",
+         "$0"
+      ],
+      "description": "attribute declaration"
+   },
+   "Attribute Specification": {
+      "prefix": "attributespec",
+      "body": [
+         "attribute ${1:<identifier>} of ${2:<entity_name_list>} : ${3:<entity_class>} is ${4:<expression>};",
+         "$0"
+      ],
+      "description": "assert specification"
+   },
+   "Block": {
+      "prefix": "block",
+      "body": [
+         "${1:<blk_Name>} : block ${2:(<optional_guard_conditional>)}",
+         "begin",
+         "\t$0",
+         "end block;"
+      ],
+      "description": "block interface"
+   },
+   "Case": {
+      "prefix": "case",
+      "body": [
+         "case ${1:<sel>} is",
+         "\twhen ${2:<choice_1>} =>",
+         "\t\t$0",
+         "",
+         "\twhen others =>",
+         "\t\t${3:null;}",
+         "end case;"
+      ],
+      "description": "case statement"
+   },
+   "FSM example generate": {
+      "prefix": "fsm",
+      "body": [
+         "process (${1:clk})",
+         "begin",
+         "\tif ${2|rising_edge,falling_edge|}($1) then",
+         "\t\t$0",
+         "\t\tcase ${3:sel} is",
+         "\t\t\twhen ${4:sel} =>",
+         "\t\t\t\t$0",
+         "\t\t\t\t$3 <= $5;",
+         "",
+         "\t\t\twhen ${5:sel} =>",
+         "\t\t\t\t$0",
+         "\t\t\t\t$3 <= $4;",
+         "",
+         "\t\t\twhen others =>",
+         "\t\t\t\t$3 <= $4;",
+         "\t\tend case;",
+         "\tend if;",
+         "end process;"
+      ],
+      "description": "case statement"
+   },
+   "Case Generate": {
+      "prefix": "casegen",
+      "body": [
+         "${1:<name>} : case ${2:<sel>} generate",
+         "\twhen ${3:<choice_1>} =>",
+         "\t\t$0",
+         "",
+         "\twhen others =>",
+         "\t\t${4:null;}",
+         "end generate;"
+      ],
+      "description": "case generate instantiation (vhdl 2008)"
+   },
+   "Component Declaration": {
+      "prefix": "componentdec",
+      "body": [
+         "component ${1:$TM_FILENAME_BASE} is",
+         "\tport (",
+         "\t\t${2:clk   : in std_logic;}",
+         "\t\t${3:reset : in std_logic;}",
+         "\t\t$0",
+         "\t);",
+         "end component;"
+      ],
+      "description": "component declaration"
+   },
+   "Component Instantiation": {
+      "prefix": "componentinst",
+      "body": [
+         "${1:<name>}: ${2:<comp_name>}",
+         "\tgeneric map (",
+         "\t\t${3:generics}",
+         "\t)",
+         "\tport map (",
+         "\t\t${4:clk   => clk,}",
+         "\t\t${5:reset => reset,}",
+         "\t\t$0",
+         "\t);"
+      ],
+      "description": "component instantiation"
+   },
+   "Constant": {
+      "prefix": "constant",
+      "body": [
+         "constant ${1:<name>} : ${2:<type>} := ${3:<default_value>};",
+         "$0"
+      ],
+      "description": "constant declaration"
+   },
+   "Signal": {
+      "prefix": "signal",
+      "body": [
+         "signal ${1:<name>} : ${2:<type>} := ${3:<default_value>};",
+         "$0"
+      ],
+      "description": "signal declaration"
+   },
+   "Configuration": {
+      "prefix": "configuration",
+      "body": [
+         "configuration ${1:<configuration_identifier>} of ${2:<entity_name>} is",
+         "\tfor ${3:<arch_name>}",
+         "\t\tfor ${4:<instance_name>} : ${5:<component_name>}",
+         "\t\t\tuse entity work.$5(${6:<arch_name>});",
+         "\t\tend for;",
+         "\tend for;",
+         "end configuration $1;"
+      ],
+      "description": "configuration declaration"
+   },
+   "Context": {
+      "prefix": "context",
+      "body": [
+         "context ${1:<lib>}.${2:<context_name>};",
+         "$0"
+      ],
+      "description": "context clause (vhdl 2008)"
+   },
+   "Context IEEE": {
+      "prefix": "contextieee",
+      "body": [
+         "context ieee.${1|ieee_bit_context,ieee_std_context|};",
+         "$0"
+      ],
+      "description": "context clause for IEEE standard contexts (ieee_bit_context,ieee_std_context) (vhdl 2008)"
+   },
+   "Disconnect": {
+      "prefix": "disconnect",
+      "body": [
+         "disconnect ${1|signal,others,all|} : ${2:<type>} after ${3:<time_expression>};",
+         "$0"
+      ],
+      "description": "context clause for IEEE standard contexts (ieee_bit_context,ieee_std_context) (vhdl 2008)"
+   },
+   "Else": {
+      "prefix": "else",
+      "body": [
+         "else",
+         "\t$0"
+      ],
+      "description": "else block"
+   },
+   "Else Generate": {
+      "prefix": "elsegen",
+      "body": [
+         "else generate",
+         "\t$0"
+      ],
+      "description": "else generate instantiation (vhdl 2008)"
+   },
+   "Elsif": {
+      "prefix": "elsif",
+      "body": [
+         "elsif ${1:<conditional>} then",
+         "\t$0"
+      ],
+      "description": "elsif block"
+   },
+   "Elsif Generate": {
+      "prefix": "elsifgen",
+      "body": [
+         "elsif ${1:<conditional>} generate",
+         "\t$0"
+      ],
+      "description": "elsif generate instantiation (vhdl 2008)"
+   },
+   "Entity": {
+      "prefix": "entity",
       "body": [
          "entity ${1:$TM_FILENAME_BASE} is",
          "\tport (",
+         "\t\t${2:clk   : in std_logic;}",
+         "\t\t${3:reset : in std_logic;}",
          "\t\t$0",
          "\t);",
-         "end entity ${1:$TM_FILENAME_BASE};"
-      ]
+         "end entity;"
+      ],
+      "description": "entity declaration"
    },
-   "architecture_declaration": {
-      "prefix": "arch",
-      "description": "Architecture Declaration",
+   "Entity and Architecture": {
+      "prefix": "entarch",
       "body": [
-         "architecture ${1:rtl} of ${2:$TM_FILENAME_BASE} is",
-         "\t",
+         "entity ${1:$TM_FILENAME_BASE} is",
+         "\tport (",
+         "\t\t${2:clk   : in std_logic;}",
+         "\t\t${3:reset : in std_logic;}",
+         "\t\t$0",
+         "\t);",
+         "end entity $1;",
+         "",
+         "architecture ${4:rtl} of $1 is",
+         "",
          "begin",
-         "\t",
-         "\t$0",
-         "\t",
-         "end architecture ${1:rtl};"
-      ]
-   },
-   "configuration_declaration": {
-      "prefix": "conf",
-      "description": "Configuration Declaration",
-      "body": [
-         "configuration ${1:rtl} of ${2:$TM_FILENAME_BASE} is",
-         "\t",
-         "\t$0",
-         "\t",
-         "end configuration ${1:rtl};"
-      ]
-   },
-   "package_declaration": {
-      "prefix": "pack",
-      "description": "Package Declaration",
-      "body": [
-         "package ${1:$TM_FILENAME_BASE} is",
-         "\t",
-         "\t$0",
-         "\t",
-         "end package ${1:$TM_FILENAME_BASE};"
-      ]
-   },
-   "package_body_declaration": {
-      "prefix": "pack",
-      "description": "Package Body Declaration",
-      "body": [
-         "package body ${1:$TM_FILENAME_BASE} is",
-         "\t",
-         "\t$0",
-         "\t",
-         "end package body ${1:$TM_FILENAME_BASE};"
-      ]
-   },
-   "case": {
-      "prefix": "case",
-      "description": "Case Statement",
-      "body": [
-         "case ${1:expression} is",
-         "\twhen ${2:choice} =>",
-         "\t\t$0",
          "",
-         "\twhen others =>",
-         "\t\t",
-         "",
-         "end case;"
-      ]
-   },
-   "case_generate": {
-      "prefix": "case",
-      "description": "Case Generate Statement",
-      "body": [
-         "${1:generate_label}: case ${2:expression} generate",
-         "\twhen ${3:choice} =>",
-         "\t\t$0",
-         "",
-         "\twhen others =>",
-         "\t\tnull;",
-         "",
-         "end generate $1;"
-      ]
-   },
-   "if": {
-      "prefix": "if",
-      "description": "If Statement",
-      "body": [
-         "if ${1:condition} then",
          "\t$0",
-         "end if;"
-      ]
+         "",
+         "end architecture;"
+      ],
+      "description": "entity declaration"
    },
-   "if_generate": {
-      "prefix": "if",
-      "description": "If Generate Statement",
+   "Enumerate": {
+      "prefix": [
+         "typeenum",
+         "typefsm"
+      ],
       "body": [
-         "${1:generate_label}: if ${2:condition} generate",
-         "\t$0",
-         "end generate $1;"
-      ]
+         "type ${1:<name>} is (${2:<state>});",
+         "\t$0"
+      ],
+      "description": "enumerate declaration"
    },
-   "for": {
+   "For": {
       "prefix": "for",
-      "description": "For Loop",
       "body": [
-         "for ${1:loop_var} in ${2:range} loop",
+         "for ${1:i} in ${2:<range>} loop",
          "\t$0",
          "end loop;"
-      ]
+      ],
+      "description": "for loop block"
    },
-   "for_generate": {
-      "prefix": "for",
-      "description": "For Generate",
+   "For Generate": {
+      "prefix": "forgen",
       "body": [
-         "${1:generate_label}: for ${2:iteration} generate",
+         "${1:<loop_gen_Name>} : for ${2:i} in ${3:<range>} generate",
          "\t$0",
-         "end generate $1;"
-      ]
+         "end generate;"
+      ],
+      "description": "for generate loop instantiation (vhdl 2008)"
    },
-   "assert": {
-      "prefix": "assert",
-      "description": "Assertion",
+   "Function Body": {
+      "prefix": "funcbody",
       "body": [
-         "assert ${1:neg_condition} report ${2:message} severity ${3|note,warning,error,failure|};"
-      ]
-   },
-   "enumeration_type": {
-      "prefix": "typeenum",
-      "description": "Enumeration type declaration",
-      "body": [
-         "type ${1:type_name} is (${0});"
-      ]
-   },
-   "array_type": {
-      "prefix": "typearray",
-      "description": "Array type declaration",
-      "body": [
-         "type ${1:type_name} is array (${2:range}) of ${3:element_type};"
-      ]
-   },
-   "record_type": {
-      "prefix": "typerecord",
-      "description": "Record type declaration",
-      "body": [
-         "type ${1:type_name} is record",
-         "\t${0}",
-         "end record ${1:type_name};"
-      ]
-   },
-   "subtype": {
-      "prefix": "subt",
-      "description": "Subtype declaration",
-      "body": [
-         "subtype ${1:subtype_name} is ${2:base_type} range ${3:0} ${4|to,downto|} ${5:7};"
-      ]
-   },
-   "testbench_process": {
-      "prefix": "tproc, processt",
-      "description": "Testbench Process (No Sensitivity List)",
-      "body": [
-         "${1:proc_name}: process",
+         "function ${1:<name>} (${2:<params>}) return ${3:<type>} is",
          "begin",
          "\t$0",
-         "end process $1;"
-      ]
+         "end function;"
+      ],
+      "description": "function body declaration"
    },
-   "combinational_process": {
-      "prefix": "cproc, processc",
-      "description": "Combinational Process",
+   "Function": {
+      "prefix": "funcdec",
       "body": [
-         "${1:proc_name}: process(${2:sensitivity_list})",
+         "function ${1:<name>} (${2:<params>}) return ${3:<type>};",
+         "$0"
+      ],
+      "description": "function declaration"
+   },
+   "Generic": {
+      "prefix": "generic",
+      "body": [
+         "generic (",
+         "\t$0",
+         ");"
+      ],
+      "description": "generic interface"
+   },
+   "Generic Map": {
+      "prefix": "genericmap",
+      "body": [
+         "generic map (",
+         "\t$0",
+         ")"
+      ],
+      "description": "generic map interface"
+   },
+   "If": {
+      "prefix": "if",
+      "body": [
+         "if ${1:<conditional>} then",
+         "\t$0",
+         "end if;"
+      ],
+      "description": "if block"
+   },
+   "If Generate": {
+      "prefix": "ifgen",
+      "body": [
+         "${1:<gen_Name>} : if ${2:<conditional>} generate",
+         "\t$0",
+         "end generate;"
+      ],
+      "description": "if generate instantiation"
+   },
+   "Integer Range": {
+      "prefix": "intrange",
+      "body": [
+         "integer range ${1:0} ${2|to,downto|} ${3:<value>};",
+         "\t$0"
+      ],
+      "description": "integer range"
+   },
+   "Library": {
+      "prefix": "library",
+      "body": [
+         "library ${1:ieee};",
+         "$0"
+      ],
+      "description": "library declaration"
+   },
+   "Library IEEE": {
+      "prefix": "libraryieee",
+      "body": [
+         "library ieee;",
+         "use ieee.std_logic_1164.all;",
+         "use ieee.numeric_std.all;",
+         "use ieee.math_real.all;",
+         "$0"
+      ],
+      "description": "common IEEE libraries declaration"
+   },
+   "Library IEEE 2008": {
+      "prefix": "libraryieee",
+      "body": [
+         "library ieee;",
+         "context ieee.ieee_std_context;",
+         "use ieee.math_real.all;",
+         "$0"
+      ],
+      "description": "common IEEE libraries declaration with 2008 standard context (vhdl 2008)"
+   },
+   "Library TextIO": {
+      "prefix": "librarytextio",
+      "body": [
+         "library std;",
+         "use std.textio.all;",
+         "$0"
+      ],
+      "description": "TextIO library declaration"
+   },
+   "Loop": {
+      "prefix": "loop",
+      "body": [
+         "${1:<name>} : loop",
+         "\t$0",
+         "end loop; -- $1"
+      ],
+      "description": "loop declaration"
+   },
+   "Natural Range": {
+      "prefix": "naturalrange",
+      "body": [
+         "natural range<>"
+      ],
+      "description": "natural range declaration"
+   },
+   "Next": {
+      "prefix": "nextloop",
+      "body": [
+         "next ${1:<loop_label>};$0"
+      ],
+      "description": "next loop"
+   },
+   "Others": {
+      "prefix": [
+         "others"
+      ],
+      "body": [
+         "(others => ${1:<value>})${2| ,;|}$0"
+      ],
+      "description": "others declaration"
+   },
+   "Package": {
+      "prefix": "pack",
+      "body": [
+         "package ${1:$TM_FILENAME_BASE} is",
+         "\t$0",
+         "end package;"
+      ],
+      "description": "package interface"
+   },
+   "Package Body": {
+      "prefix": "packbody",
+      "body": [
+         "package body ${1:$TM_FILENAME_BASE} is",
+         "\t$0",
+         "end package body;"
+      ],
+      "description": "package body interface"
+   },
+   "Port": {
+      "prefix": "port",
+      "body": [
+         "port (",
+         "\t$0",
+         ");"
+      ],
+      "description": "port interface"
+   },
+   "Port Map": {
+      "prefix": "portmap",
+      "body": [
+         "port map (",
+         "\t$0",
+         ");"
+      ],
+      "description": "port map interface"
+   },
+   "Procedure Body": {
+      "prefix": "procedurebody",
+      "body": [
+         "procedure ${1:<name>} (${2:<params>}) is",
          "begin",
          "\t$0",
-         "end process $1;"
-      ]
+         "end procedure;"
+      ],
+      "description": "procedure body declaration"
    },
-   "asynchronous_reset_clocked_process": {
-      "prefix": "aproc, processa",
-      "description": "Clocked Process (Asynchronous Reset)",
+   "Procedure Declaration": {
+      "prefix": "proceduredec",
       "body": [
-         "${1:proc_name}: process(${3:clk}, ${4:rst})",
+         "procedure ${1:<name>} (${2:<params>});",
+         "\t$0"
+      ],
+      "description": "procedure declaration"
+   },
+   "Process Asynchronous": {
+      "prefix": [
+         "aproc",
+         "processasync"
+      ],
+      "body": [
+         "process (${1:clk}, ${2:reset})",
          "begin",
-         "\tif ${4:rst} = ${5:rst_val} then",
+         "\tif $2 = ${3|'1','0'|} then",
          "\t\t$0",
-         "\telsif ${2|rising_edge,falling_edge|}(${3:clk}) then",
+         "\telsif ${4|rising_edge,falling_edge|}($1) then",
          "\t\t",
          "\tend if;",
-         "end process $1;"
-      ]
+         "end process;"
+      ],
+      "description": "asynchronous process block"
    },
-   "synchronous_reset_clocked_process": {
-      "prefix": "sproc, processs",
-      "description": "Clocked Process (Synchronous Reset)",
+   "Process Synchronous": {
+      "prefix": [
+         "sproc",
+         "processsync"
+      ],
       "body": [
-         "${1:proc_name}: process(${3:clk})",
+         "process (${1:clk})",
          "begin",
-         "\tif ${2|rising_edge,falling_edge|}(${3:clk}) then",
-         "\t\tif ${4:rst} = ${5:rst_val} then",
+         "\tif ${2|rising_edge,falling_edge|}($1) then",
+         "\t\tif ${3:reset} = ${4|'1','0'|} then",
          "\t\t\t$0",
          "\t\telse",
          "\t\t\t",
          "\t\tend if;",
          "\tend if;",
-         "end process $1;"
-      ]
+         "end process;"
+      ],
+      "description": "clocked process block"
    },
-   "std_logic_vector": {
-      "prefix": "std",
-      "description": "std_logic_vector Type",
-      "body": "std_logic_vector(${1:7} ${2|downto,to|} ${3:0})"
+   "Process Clocked": {
+      "prefix": [
+         "cproc",
+         "processclk"
+      ],
+      "body": [
+         "process (${1:clk})",
+         "begin",
+         "\tif ${2|rising_edge,falling_edge|}($1) then",
+         "\t\t$0",
+         "\tend if;",
+         "end process;"
+      ],
+      "description": "clocked process block"
    },
-   "std_ulogic_vector": {
-      "prefix": "stdu",
-      "description": "std_ulogic_vector Type",
-      "body": "std_ulogic_vector(${1:7} ${2|downto,to|} ${3:0})"
+   "Process Combinatorial": {
+      "prefix": "process",
+      "body": [
+         "process (${1:all})",
+         "begin",
+         "\t$0",
+         "end process;"
+      ],
+      "description": "combinatorial process block"
    },
-   "signed": {
-      "prefix": "si",
-      "description": "signed Type",
-      "body": "signed(${1:7} ${2|downto,to|} ${3:0})"
+   "Record": {
+      "prefix": "typerecord",
+      "body": [
+         "type ${1:<name>} is record",
+         "\t$0",
+         "end record;"
+      ],
+      "description": "record declaration"
    },
-   "unsigned": {
+   "Signed": {
+      "prefix": "sign",
+      "body": [
+         "signed($1 ${2|downto,to|} $3)${4| := (others => '0');,;|}$0"
+      ],
+      "description": "signed declaration"
+   },
+   "Standard Logic": {
+      "prefix": "sl",
+      "body": [
+         "std_logic$0"
+      ],
+      "description": "std_logic"
+   },
+   "Standard ULogic": {
+      "prefix": "sul",
+      "body": [
+         "std_ulogic$0"
+      ],
+      "description": "std_logic"
+   },
+   "Standard Logic Vector": {
+      "prefix": [
+         "std",
+         "slv"
+      ],
+      "body": [
+         "std_logic_vector$0"
+      ],
+      "description": "std_logic_vector"
+   },
+   "Standard Logic Vector Declaration": {
+      "prefix": [
+         "stddec",
+         "slvdec"
+      ],
+      "body": [
+         "std_logic_vector($1 ${2|downto,to|} $3)${4| := (others => '0');,;|}$0"
+      ],
+      "description": "std_logic_vector declaration"
+   },
+   "Standard ULogic Vector": {
+      "prefix": [
+         "stdu",
+         "sulv"
+      ],
+      "body": [
+         "std_ulogic_vector"
+      ],
+      "description": "std_ulogic_vector"
+   },
+   "Standard ULogic Vector Declaration": {
+      "prefix": [
+         "stdudec",
+         "sulvdec"
+      ],
+      "body": [
+         "std_ulogic_vector($1 ${2|downto,to|} $3)${4| := (others => '0');,;|}$0"
+      ],
+      "description": "std_ulogic_vector declaration"
+   },
+   "Subtype": {
+      "prefix": "typesubtype",
+      "body": [
+         "subtype ${1:<name>} is ${2:<base_type>} range ${3:0} ${4|to,downto|} ${5:<value>};",
+         "$0"
+      ],
+      "description": "std_ulogic_vector declaration"
+   },
+   "Unsigned": {
       "prefix": "uns",
-      "description": "unsigned Type",
-      "body": "unsigned(${1:7} ${2|downto,to|} ${3:0})"
+      "body": [
+         "unsigned(${1} ${2|downto,to|} ${3})${4| := (others => '0');,;|}$0"
+      ],
+      "description": "unsigned declaration"
    },
-   "zeroes": {
-      "prefix": "oth",
-      "description": "Zero Others",
-      "body": "others => '0'"
+   "Use": {
+      "prefix": "use",
+      "body": [
+         "use ${1:<lib>}.${2:<pkg>}.all;",
+         "$0"
+      ],
+      "description": "use clause"
    },
-   "integer_range_limitation": {
-      "prefix": "intr",
-      "description": "Integer (Range Limitation)",
-      "body": "integer range ${1:0} ${2|downto,to|} ${3:255}"
+   "Use IEEE Package": {
+      "prefix": "useieee",
+      "body": [
+         "use ieee.${1|std_logic_1164,std_logic_textio,numeric_std,numeric_bit,math_real,math_complex|}.all;",
+         "$0"
+      ],
+      "description": "use clause IEEE standard package (std_logic_1164,std_logic_textio,numeric_std,math_real,math_complex)"
+   },
+   "When": {
+      "prefix": "when",
+      "body": [
+         "when ${1:<choice>} =>",
+         "\t$0"
+      ],
+      "description": "when declaration"
+   },
+   "When Else": {
+      "prefix": "whenelse",
+      "body": [
+         "${1:<signal>} <= ${2:<value>} when ${3:<conditional>} else ${4:<value>};",
+         "$0"
+      ],
+      "description": "concurrent when else declaration"
+   },
+   "While": {
+      "prefix": "while",
+      "body": [
+         "while ${1:<conditional>} loop",
+         "\t$0",
+         "end loop;"
+      ],
+      "description": "while loop"
+   },
+   "With Select": {
+      "prefix": [
+         "sel",
+         "withsel"
+      ],
+      "body": [
+         "with ${1:<sel>} select",
+         "\t${2:<signal>} <= ${3:<value>} when ${4:<sel_value>},",
+         "\t\t${5:<value>} when others;",
+         "$0"
+      ],
+      "description": "concurrent with select declaration"
    }
 }
